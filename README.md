@@ -82,7 +82,6 @@ The system uses a fine-tuned **DistilBERT** model with the following specificati
 - **Adaptive sequence length** based on input size.
 - **Docker-optimized deployment**.
 - **Non-root user** for enhanced security.
-![image](https://github.com/user-attachments/assets/42033ebc-39c1-464b-b6a4-d97de223f31c)
 
 ---
 ## 🛠 Development & Setup
@@ -98,7 +97,7 @@ The system uses a fine-tuned **DistilBERT** model with the following specificati
 ### **Installation & Running Locally**
 ```bash
 # Clone the repository
-git clone https://github.com/DebBidhi/priority-4c-classifier.git
+git clone https://github.com/yourusername/priority-4c-classifier.git
 cd priority-4c-classifier
 
 # Install dependencies
@@ -109,8 +108,72 @@ python app.py
 ```
 
 ---
-## 🚀 Deployment
-The project is configured for deployment on **Hugging Face Spaces** using Docker. More details: [Hugging Face Spaces Config Reference](https://huggingface.co/docs/hub/spaces-config-reference)
+## 🚀 Model Training Code
+```python
+import matplotlib.pyplot as plt
+from tqdm import tqdm
+import torch
+from torch.cuda.amp import autocast, GradScaler
+from sklearn.metrics import accuracy_score
+
+def train(model, train_dataloader, optimizer, device, num_epochs):
+    model.train()
+    scaler = GradScaler()
+    all_losses = []
+    epoch_losses = []
+
+    for epoch in range(num_epochs):
+        print(f"Epoch {epoch + 1}/{num_epochs}")
+        print('-' * 10)
+        total_loss = 0
+        all_preds = []
+        all_labels = []
+        
+        progress_bar = tqdm(train_dataloader, desc="Training")
+        for batch in progress_bar:
+            batch = {k: v.to(device) for k, v in batch.items()}
+            optimizer.zero_grad()
+            
+            try:
+                with autocast():
+                    outputs = model(**batch)
+                    loss = outputs.loss
+                
+                all_losses.append(loss.item())
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+                
+                total_loss += loss.item()
+                preds = torch.argmax(outputs.logits, dim=1).cpu().numpy()
+                labels = batch['labels'].cpu().numpy()
+                all_preds.extend(preds)
+                all_labels.extend(labels)
+                
+                progress_bar.set_postfix({'loss': f"{loss.item():.4f}"})
+            except Exception as e:
+                print(f"Error in batch: {e}")
+                raise e
+
+        avg_loss = total_loss / len(train_dataloader)
+        epoch_losses.append(avg_loss)
+        accuracy = accuracy_score(all_labels, all_preds)
+        
+        print(f"Train Loss: {avg_loss:.4f}")
+        print(f"Train Accuracy: {accuracy:.4f}")
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(epoch_losses)
+    plt.title('Training Loss (per epoch)')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.show()
+
+    return all_losses, epoch_losses
+```
+
+![image](https://github.com/user-attachments/assets/d40bbd2b-2a50-4124-a081-80bbe44384aa)
+
 
 ---
 ## 🔒 Security Notes
@@ -125,5 +188,5 @@ This project is licensed under the **MIT License**.
 
 ---
 ### 🎯 **Apexkrieg - Empowering Intelligent Execution**
-Priority 4C Classifier is a core component of **Apexkrieg**, helping users execute goals and tasks efficiently by leveraging **AI-driven tools**. 🚀🔥
+Priority 4C Classifier is a core component of **Apexkrieg**, helping users execute goals and tasks efficiently by leveraging **AI-driven prioritization**. 🚀🔥
 
