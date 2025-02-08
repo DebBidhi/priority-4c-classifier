@@ -97,7 +97,7 @@ The system uses a fine-tuned **DistilBERT** model with the following specificati
 ### **Installation & Running Locally**
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/priority-4c-classifier.git
+git clone https://github.com/DebBidhi/priority-4c-classifier.git
 cd priority-4c-classifier
 
 # Install dependencies
