@@ -82,6 +82,7 @@ The system uses a fine-tuned **DistilBERT** model with the following specificati
 - **Adaptive sequence length** based on input size.
 - **Docker-optimized deployment**.
 - **Non-root user** for enhanced security.
+![image](https://github.com/user-attachments/assets/42033ebc-39c1-464b-b6a4-d97de223f31c)
 
 ---
 ## 🛠 Development & Setup
